@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"strconv"
+	"strings"
 )
 
 //each image is [][]float64, is a array of pixels
@@ -15,8 +16,6 @@ func byteArrayToFloat64Array(b []byte) []float64 {
 	var f []float64
 	for i := 0; i < len(b); i++ {
 		val, _ := strconv.ParseFloat(string(b[i]), 64)
-		/*fmt.Print(string(b[i]) + "-")
-		fmt.Println(val)*/
 		f = append(f, val)
 	}
 	return f
@@ -24,14 +23,12 @@ func byteArrayToFloat64Array(b []byte) []float64 {
 
 func readImage(path string) [][]float64 {
 	//open image file
-	/*reader, err := os.Open(path)
-	check(err)
-	defer reader.Close()*/
-
 	dat, err := ioutil.ReadFile(path)
 	check(err)
 
-	imageRaw, err := dataToImage(dat, path)
+	pathSplited := strings.Split(path, ".")
+	imageExtension := pathSplited[len(pathSplited)-1]
+	imageRaw, err := dataToImage(dat, imageExtension)
 	check(err)
 
 	//resize the image to standard size
@@ -39,15 +36,9 @@ func readImage(path string) [][]float64 {
 
 	//convert the image to histogram(RGBA)
 	histogram := imageToHistogram(image)
-	//convert image to bytes
-	/*imgBytes, err := imageToData(image, path)
-	check(err)*/
-
-	//imgFloat := byteArrayToFloat64Array(imgBytes)
 	return histogram
 }
 func readDataset(path string) map[string]ImgDataset {
-	//dataset := make(map[string]ImgDataset)
 	dataset := make(Dataset)
 
 	folders, _ := ioutil.ReadDir(path)
@@ -62,8 +53,6 @@ func readDataset(path string) map[string]ImgDataset {
 
 			imgDataset = append(imgDataset, image)
 
-			/*fmt.Println(folder.Name())
-			fmt.Println(file.Name())*/
 		}
 
 		//add the foldername to the Dataset map

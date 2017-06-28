@@ -2,16 +2,21 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/http"
 	"strconv"
 	"time"
 )
+
+//dataset := make(Dataset)
+var dataset Dataset
 
 func main() {
 	readConfig("./config.json")
 
 	c.Cyan("reading images datasets")
 	tStart := time.Now()
-	dataset := readDataset("./dataset")
+	dataset = readDataset("./dataset")
 	fmt.Print("time spend reading images: ")
 	fmt.Println(time.Since(tStart))
 	fmt.Println("total folders scanned: " + strconv.Itoa(len(dataset)))
@@ -24,8 +29,8 @@ func main() {
 
 	//we have the images in the dataset variable
 	//now, can take images
-	testFile := readImage("./test.jpg")
-	r := knn(dataset, testFile)
-	fmt.Println("seems to be a " + r)
 
+	c.Green("server running")
+	router := NewRouter()
+	log.Fatal(http.ListenAndServe(":"+config.ServerPort, router))
 }

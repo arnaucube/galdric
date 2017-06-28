@@ -11,13 +11,11 @@ import (
 
 type imgRGBA [][]float64
 
-func dataToImage(data []byte, imageName string) (image.Image, error) {
-	//var histogram imgRGBA
+func dataToImage(data []byte, imageExtension string) (image.Image, error) {
 	reader := bytes.NewReader(data)
-	//var imageExtension = strings.Split(imageName, ".")[1]
 	var img image.Image
 	var err error
-	/*switch imageExtension {
+	switch imageExtension {
 	case "png":
 		img, err = png.Decode(reader)
 	case "jpg":
@@ -27,19 +25,16 @@ func dataToImage(data []byte, imageName string) (image.Image, error) {
 	default:
 		img = nil
 	}
-	*/
-	img, err = jpeg.Decode(reader)
 	if err != nil {
 		return img, err
 	}
 	return img, err
 }
 
-func imageToData(img image.Image, imageName string) ([]byte, error) {
+func imageToData(img image.Image, imageExtension string) ([]byte, error) {
 	buf := new(bytes.Buffer)
-	//var imageExtension = strings.Split(imageName, ".")[1]
 	var err error
-	/*switch imageExtension {
+	switch imageExtension {
 	case "png":
 		err = png.Encode(buf, img)
 	case "jpg":
@@ -48,8 +43,7 @@ func imageToData(img image.Image, imageName string) ([]byte, error) {
 		err = jpeg.Encode(buf, img, nil)
 	default:
 		img = nil
-	}*/
-	err = jpeg.Encode(buf, img, nil)
+	}
 	if err != nil {
 		return buf.Bytes(), err
 	}
