@@ -42,14 +42,43 @@ func isNeighbour(neighbours []Neighbour, dist float64, label string) []Neighbour
 	return neighbours
 }
 
+func getMapKey(dataset map[string]ImgDataset) string {
+	for k, _ := range dataset {
+		return k
+	}
+	return ""
+}
+
+type LabelCount struct {
+	Label string
+	Count int
+}
+
+func averageLabel(neighbours []Neighbour) string {
+	labels := make(map[string]int)
+	for _, n := range neighbours {
+		labels[n.Label]++
+	}
+	//create array from map
+	var a []LabelCount
+	for k, v := range labels {
+		a = append(a, LabelCount{k, v})
+	}
+	sort.Slice(a, func(i, j int) bool {
+		return a[i].Count > a[j].Count
+	})
+	fmt.Println(a)
+	//send the most appeared neighbour in k
+	return a[0].Label
+}
 func knn(dataset Dataset, input [][]float64) string {
-	k := 3
+	k := 10
 	var neighbours []Neighbour
-	//d := euclideanDist(dataset["leopard"][0], input)
+	label := getMapKey(dataset)
 	for i := 0; i < k; i++ {
 		/*neighbours[i].Dist = euclideanDist(dataset["leopard"][0], input)
 		neighbours[i].Label = "leopard"*/
-		neighbours = append(neighbours, Neighbour{euclideanDist(dataset["leopard"][0], input), "leopard"})
+		neighbours = append(neighbours, Neighbour{euclideanDist(dataset[label][0], input), label})
 	}
 	for l, v := range dataset {
 		for i := 0; i < len(v); i++ {
@@ -66,5 +95,6 @@ func knn(dataset Dataset, input [][]float64) string {
 		fmt.Println(neighbours[i].Dist)
 	}
 
-	return neighbours[0].Label
+	r := averageLabel(neighbours)
+	return r
 }

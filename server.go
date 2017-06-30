@@ -80,8 +80,9 @@ func NewImage(w http.ResponseWriter, r *http.Request) {
 	//data, err := ioutil.ReadAll(file)
 	//check(err)
 	img := readImage(handler.Filename)
-	result := knn(dataset, img)
+	histogram := imageToHistogram(img)
+	result := knn(dataset, histogram)
 
-	fmt.Println("seems to be a " + result)
+	c.Purple("seems to be a " + result)
 	fmt.Fprintln(w, "seems to be a "+result)
 }

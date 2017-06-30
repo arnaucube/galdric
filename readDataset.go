@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"image"
 	"io/ioutil"
 	"strconv"
 	"strings"
@@ -21,7 +22,7 @@ func byteArrayToFloat64Array(b []byte) []float64 {
 	return f
 }
 
-func readImage(path string) [][]float64 {
+func readImage(path string) image.Image {
 	//open image file
 	dat, err := ioutil.ReadFile(path)
 	check(err)
@@ -34,9 +35,12 @@ func readImage(path string) [][]float64 {
 	//resize the image to standard size
 	image := Resize(imageRaw)
 
-	//convert the image to histogram(RGBA)
-	histogram := imageToHistogram(image)
-	return histogram
+	return image
+	/*
+		//convert the image to histogram(RGBA)
+		histogram := imageToHistogram(image)
+		return histogram
+	*/
 }
 func readDataset(path string) map[string]ImgDataset {
 	dataset := make(Dataset)
@@ -49,9 +53,16 @@ func readDataset(path string) map[string]ImgDataset {
 
 		folderFiles, _ := ioutil.ReadDir(path + "/" + folder.Name())
 		for _, file := range folderFiles {
+			//get the image as original
 			image := readImage(path + "/" + folder.Name() + "/" + file.Name())
+			histogram := imageToHistogram(image)
 
-			imgDataset = append(imgDataset, image)
+			//get the image with EdgeDetection filter
+			imageED := EdgeDetection(image)
+			histogramED := imageToHistogram(imageED)
+
+			imgDataset = append(imgDataset, histogram)
+			imgDataset = append(imgDataset, histogramED)
 
 		}
 

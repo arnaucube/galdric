@@ -6,6 +6,7 @@ import (
 	"image/jpeg"
 	"image/png"
 
+	"github.com/anthonynsimon/bild/effect"
 	"github.com/nfnt/resize"
 )
 
@@ -75,5 +76,9 @@ func imageToHistogram(img image.Image) [][]float64 {
 
 func Resize(img image.Image) image.Image {
 	r := resize.Resize(uint(config.ImgWidth), uint(config.ImgHeigh), img, resize.Lanczos3)
+	return r
+}
+func EdgeDetection(img image.Image) image.Image {
+	r := effect.EdgeDetection(img, 1.0)
 	return r
 }
