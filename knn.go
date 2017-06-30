@@ -5,6 +5,11 @@ import (
 	"sort"
 )
 
+type Neighbour struct {
+	Dist  float64
+	Label string
+}
+
 func euclideanDist(img1, img2 [][]float64) float64 {
 	var dist float64
 	for i := 0; i < len(img1); i++ {
@@ -14,11 +19,6 @@ func euclideanDist(img1, img2 [][]float64) float64 {
 	}
 
 	return dist
-}
-
-type Neighbour struct {
-	Dist  float64
-	Label string
 }
 
 func isNeighbour(neighbours []Neighbour, dist float64, label string) []Neighbour {
@@ -71,30 +71,39 @@ func averageLabel(neighbours []Neighbour) string {
 	//send the most appeared neighbour in k
 	return a[0].Label
 }
-func knn(dataset Dataset, input [][]float64) string {
-	k := 10
-	var neighbours []Neighbour
-	label := getMapKey(dataset)
-	for i := 0; i < k; i++ {
-		/*neighbours[i].Dist = euclideanDist(dataset["leopard"][0], input)
-		neighbours[i].Label = "leopard"*/
-		neighbours = append(neighbours, Neighbour{euclideanDist(dataset[label][0], input), label})
-	}
+
+func distNeighboursFromDataset(dataset Dataset, neighbours []Neighbour, input [][]float64) []Neighbour {
+	//check the complete dataset, checking if each entry is a k nearest neighbour
 	for l, v := range dataset {
 		for i := 0; i < len(v); i++ {
 			dNew := euclideanDist(v[i], input)
-			/*if dNew < d {
-				d = dNew
-				label = l
-			}*/
 			neighbours = isNeighbour(neighbours, dNew, l)
 		}
 	}
+	return neighbours
+}
+func knn(dataset Dataset, input [][]float64) string {
+	k := 6
+	var neighbours []Neighbour
+	var neighboursED []Neighbour
+
+	//get a key from map dataset, the key is a label
+	label := getMapKey(dataset)
+	//fill the first k neighbours
+	for i := 0; i < k; i++ {
+		neighbours = append(neighbours, Neighbour{euclideanDist(dataset[label][0], input), label})
+		neighboursED = append(neighbours, Neighbour{euclideanDist(dataset[label][0], input), label})
+	}
+
+	neighbours = distNeighboursFromDataset(dataset, neighbours, input)
+	neighboursED = distNeighboursFromDataset(datasetED, neighbours, input)
+	neighbours = append(neighbours, neighboursED...)
+
 	for i := 0; i < len(neighbours); i++ {
 		fmt.Print(neighbours[i].Label + " - ")
 		fmt.Println(neighbours[i].Dist)
 	}
-
+	//from the k nearest neighbours, get the more frequent neighbour
 	r := averageLabel(neighbours)
 	return r
 }

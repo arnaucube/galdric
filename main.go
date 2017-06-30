@@ -10,13 +10,14 @@ import (
 
 //dataset := make(Dataset)
 var dataset Dataset
+var datasetED Dataset
 
 func main() {
 	readConfig("./config.json")
 
 	c.Cyan("reading images datasets")
 	tStart := time.Now()
-	dataset = readDataset("./dataset")
+	dataset, datasetED = readDataset("./dataset")
 	fmt.Print("time spend reading images: ")
 	fmt.Println(time.Since(tStart))
 	fmt.Println("total folders scanned: " + strconv.Itoa(len(dataset)))

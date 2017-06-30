@@ -19,9 +19,7 @@ func dataToImage(data []byte, imageExtension string) (image.Image, error) {
 	switch imageExtension {
 	case "png":
 		img, err = png.Decode(reader)
-	case "jpg":
-		img, err = jpeg.Decode(reader)
-	case "jpeg":
+	case "jpg", "jpeg":
 		img, err = jpeg.Decode(reader)
 	default:
 		img = nil
@@ -38,9 +36,7 @@ func imageToData(img image.Image, imageExtension string) ([]byte, error) {
 	switch imageExtension {
 	case "png":
 		err = png.Encode(buf, img)
-	case "jpg":
-		err = jpeg.Encode(buf, img, nil)
-	case "jpeg":
+	case "jpg", "jpeg":
 		err = jpeg.Encode(buf, img, nil)
 	default:
 		img = nil

@@ -42,33 +42,35 @@ func readImage(path string) image.Image {
 		return histogram
 	*/
 }
-func readDataset(path string) map[string]ImgDataset {
+func readDataset(path string) (Dataset, Dataset) {
 	dataset := make(Dataset)
+	datasetED := make(Dataset)
 
 	folders, _ := ioutil.ReadDir(path)
 	for _, folder := range folders {
 		fmt.Println(folder.Name())
 
 		var imgDataset ImgDataset
+		var imgDatasetED ImgDataset
 
 		folderFiles, _ := ioutil.ReadDir(path + "/" + folder.Name())
 		for _, file := range folderFiles {
 			//get the image as original
 			image := readImage(path + "/" + folder.Name() + "/" + file.Name())
 			histogram := imageToHistogram(image)
+			imgDataset = append(imgDataset, histogram)
 
 			//get the image with EdgeDetection filter
 			imageED := EdgeDetection(image)
 			histogramED := imageToHistogram(imageED)
-
-			imgDataset = append(imgDataset, histogram)
-			imgDataset = append(imgDataset, histogramED)
+			imgDatasetED = append(imgDatasetED, histogramED)
 
 		}
 
 		//add the foldername to the Dataset map
 		dataset[folder.Name()] = imgDataset
+		datasetED[folder.Name()] = imgDatasetED
 	}
 
-	return dataset
+	return dataset, datasetED
 }
