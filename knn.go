@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"image"
 	"sort"
 )
 
@@ -82,22 +83,34 @@ func distNeighboursFromDataset(dataset Dataset, neighbours []Neighbour, input []
 	}
 	return neighbours
 }
-func knn(dataset Dataset, input [][]float64) string {
+func knn(datasets []Dataset, imgInput image.Image) string {
 	k := 6
 	var neighbours []Neighbour
 	var neighboursED []Neighbour
+	var neighboursG []Neighbour
+
+	imgED := EdgeDetection(imgInput)
+	imgG := Grayscale(imgInput)
+
+	histogram := imageToHistogram(imgInput)
+	histogramED := imageToHistogram(imgED)
+	histogramG := imageToHistogram(imgG)
 
 	//get a key from map dataset, the key is a label
-	label := getMapKey(dataset)
+	label := getMapKey(datasets[0])
 	//fill the first k neighbours
 	for i := 0; i < k; i++ {
-		neighbours = append(neighbours, Neighbour{euclideanDist(dataset[label][0], input), label})
-		neighboursED = append(neighbours, Neighbour{euclideanDist(dataset[label][0], input), label})
+		neighbours = append(neighbours, Neighbour{euclideanDist(datasets[0][label][0], histogram), label})
+		neighboursED = append(neighboursED, Neighbour{euclideanDist(datasets[1][label][0], histogramED), label})
+		neighboursG = append(neighboursG, Neighbour{euclideanDist(datasets[2][label][0], histogramG), label})
 	}
 
-	neighbours = distNeighboursFromDataset(dataset, neighbours, input)
-	neighboursED = distNeighboursFromDataset(datasetED, neighbours, input)
-	neighbours = append(neighbours, neighboursED...)
+	neighbours = distNeighboursFromDataset(datasets[0], neighbours, histogram)
+	neighboursED = distNeighboursFromDataset(datasets[1], neighboursED, histogramED)
+	neighboursG = distNeighboursFromDataset(datasets[2], neighboursG, histogramG)
+
+	//neighbours = append(neighbours, neighboursED...)
+	neighbours = append(neighbours, neighboursG...)
 
 	for i := 0; i < len(neighbours); i++ {
 		fmt.Print(neighbours[i].Label + " - ")

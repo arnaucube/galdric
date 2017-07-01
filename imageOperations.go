@@ -78,3 +78,11 @@ func EdgeDetection(img image.Image) image.Image {
 	r := effect.EdgeDetection(img, 1.0)
 	return r
 }
+func Grayscale(img image.Image) image.Image {
+	r := effect.Grayscale(img)
+	return r
+}
+func Emboss(img image.Image) image.Image {
+	r := effect.Emboss(img)
+	return r
+}

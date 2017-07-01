@@ -8,22 +8,21 @@ import (
 	"time"
 )
 
-//dataset := make(Dataset)
-var dataset Dataset
-var datasetED Dataset
+//array of datasets
+var datasets []Dataset
 
 func main() {
 	readConfig("./config.json")
 
 	c.Cyan("reading images datasets")
 	tStart := time.Now()
-	dataset, datasetED = readDataset("./dataset")
+	datasets = readDataset("./dataset")
 	fmt.Print("time spend reading images: ")
 	fmt.Println(time.Since(tStart))
-	fmt.Println("total folders scanned: " + strconv.Itoa(len(dataset)))
+	fmt.Println("total folders scanned: " + strconv.Itoa(len(datasets[0])))
 
 	numImages := 0
-	for _, v := range dataset {
+	for _, v := range datasets[0] {
 		numImages = numImages + len(v)
 	}
 	c.Cyan("total images in dataset: " + strconv.Itoa(numImages))

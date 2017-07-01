@@ -42,9 +42,11 @@ func readImage(path string) image.Image {
 		return histogram
 	*/
 }
-func readDataset(path string) (Dataset, Dataset) {
+func readDataset(path string) []Dataset {
+	var resultDatasets []Dataset
 	dataset := make(Dataset)
 	datasetED := make(Dataset)
+	datasetG := make(Dataset)
 
 	folders, _ := ioutil.ReadDir(path)
 	for _, folder := range folders {
@@ -52,6 +54,7 @@ func readDataset(path string) (Dataset, Dataset) {
 
 		var imgDataset ImgDataset
 		var imgDatasetED ImgDataset
+		var imgDatasetG ImgDataset
 
 		folderFiles, _ := ioutil.ReadDir(path + "/" + folder.Name())
 		for _, file := range folderFiles {
@@ -65,12 +68,20 @@ func readDataset(path string) (Dataset, Dataset) {
 			histogramED := imageToHistogram(imageED)
 			imgDatasetED = append(imgDatasetED, histogramED)
 
+			//get the image with Grayscale filter
+			imageG := Grayscale(image)
+			histogramG := imageToHistogram(imageG)
+			imgDatasetG = append(imgDatasetG, histogramG)
 		}
 
 		//add the foldername to the Dataset map
 		dataset[folder.Name()] = imgDataset
 		datasetED[folder.Name()] = imgDatasetED
+		datasetG[folder.Name()] = imgDatasetG
 	}
 
-	return dataset, datasetED
+	resultDatasets = append(resultDatasets, dataset)
+	resultDatasets = append(resultDatasets, datasetED)
+	resultDatasets = append(resultDatasets, datasetG)
+	return resultDatasets
 }

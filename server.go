@@ -74,14 +74,9 @@ func NewImage(w http.ResponseWriter, r *http.Request) {
 	_, handler, err := r.FormFile("file")
 	check(err)
 
-	//imageName := strings.Split(handler.Filename, ".")[0]
-	//fileName := imageName + ".png"
-
-	//data, err := ioutil.ReadAll(file)
-	//check(err)
 	img := readImage(handler.Filename)
-	histogram := imageToHistogram(img)
-	result := knn(dataset, histogram)
+	//histogram := imageToHistogram(img)
+	result := knn(datasets, img)
 
 	c.Purple("seems to be a " + result)
 	fmt.Fprintln(w, "seems to be a "+result)
